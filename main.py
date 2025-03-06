@@ -1,11 +1,10 @@
-import asyncio
 import os
 
 from discord import Client, Intents, Message
 from dotenv import load_dotenv
 
-from responses import get_response
-from voice import handle_voice_command
+from modules.responses import get_response
+from modules.voice import handle_voice_command
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
