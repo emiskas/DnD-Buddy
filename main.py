@@ -19,7 +19,7 @@ async def send_message(message: Message, user_message: str) -> None:
     if is_private := user_message[0] == "?":
         user_message = user_message[1:]
 
-    response: str = get_response(user_message)
+    response: str = get_response(message)
     if response:
         (
             await message.author.send(response)
