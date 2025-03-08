@@ -15,7 +15,7 @@ class InitiativeTracker:
     def display_order(self):
         """Display the current initiative order."""
         return [
-            f"{player["name"]} ({player["initiative"]})"
+            f"{player["name"]} - {player["initiative"]}"
             for player in self.initiative_list
         ]
 
