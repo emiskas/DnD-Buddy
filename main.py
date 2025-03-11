@@ -1,19 +1,14 @@
 import os
 
-from discord import Client, Intents, Message
+from discord import Message
 from dotenv import load_dotenv
 
 from modules.responses import get_response
 from modules.voice import handle_voice_command
+from modules.client import client
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
-
-# Set up Discord bot with required intents
-intents: Intents = Intents.default()
-intents.message_content = True
-intents.voice_states = True
-client: Client = Client(intents=intents)
 
 
 async def send_message(message: Message, user_message: str) -> None:
@@ -24,7 +19,7 @@ async def send_message(message: Message, user_message: str) -> None:
     if is_private := user_message[0] == "?":
         user_message = user_message[1:]
 
-    response: str = get_response(user_message)
+    response: str = get_response(message)
     if response:
         (
             await message.author.send(response)
