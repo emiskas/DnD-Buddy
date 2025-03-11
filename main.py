@@ -1,6 +1,7 @@
 import os
 
 from discord import Message
+import discord
 from dotenv import load_dotenv
 
 from modules.responses import get_response
@@ -19,13 +20,22 @@ async def send_message(message: Message, user_message: str) -> None:
     if is_private := user_message[0] == "?":
         user_message = user_message[1:]
 
-    response: str = get_response(message)
+    response = get_response(message)
+
     if response:
-        (
-            await message.author.send(response)
-            if is_private
-            else await message.channel.send(response)
-        )
+        # Check if the response is an embed or string
+        if isinstance(response, discord.Embed):
+            # Handle embed response
+            if is_private:
+                await message.author.send(embed=response)
+            else:
+                await message.channel.send(embed=response)
+        else:
+            # Handle text response
+            if is_private:
+                await message.author.send(response)
+            else:
+                await message.channel.send(response)
 
 
 @client.event

@@ -18,3 +18,4 @@ propcache==0.3.0
 python-dotenv==1.0.1
 yarl==1.18.3
 yt-dlp==2025.2.19
+google-generativeai==0.5.2

@@ -14,10 +14,13 @@ class InitiativeTracker:
 
     def display_order(self):
         """Display the current initiative order."""
-        return [
-            f"{player["name"]} - {player["initiative"]}"
+        if not self.initiative_list:
+            return "No one has rolled initiative yet."
+        
+        return "\n".join(
+            f"[{player['name']} - {player['initiative']}]" 
             for player in self.initiative_list
-        ]
+        )
 
     def reset(self):
         """Reset the initiative order."""
