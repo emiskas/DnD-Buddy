@@ -1,5 +1,4 @@
 import asyncio
-
 import discord
 import yt_dlp
 from discord.utils import get
@@ -13,35 +12,37 @@ async def play_soundcloud(vc, soundcloud_url):
         "format": "bestaudio",
         "extract_audio": True,
         "audio_format": "mp3",
-        "quiet": True,  # Suppresses unnecessary console output
+        "quiet": True,
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(soundcloud_url, download=False)
-        url = info["url"]
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(soundcloud_url, download=False)
+            url = info["url"]
 
-    vc.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
+        vc.play(discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS))
 
-    # Wait for playback to finish before disconnecting
-    while vc.is_playing():
-        await asyncio.sleep(1)
+        # Wait for playback to finish before disconnecting
+        while vc.is_playing():
+            await asyncio.sleep(1)
 
-    await vc.disconnect()  # Bot leaves voice channel after song ends
+    except Exception as e:
+        print(f"❌ Error playing audio: {e}")
+
+    await vc.disconnect()
 
 
-async def handle_voice_command(client, message):
+async def handle_voice_command(interaction, soundcloud_url):
     """Handles joining a voice channel and playing SoundCloud audio."""
-
-    soundcloud_url = message.content.split(" ", 1)[1]  # Extract URL from message
-
-    if not message.author.voice or not message.author.voice.channel:
-        await message.channel.send("You need to be in a voice channel!")
+    if not interaction.user.voice or not interaction.user.voice.channel:
+        await interaction.response.send_message("You need to be in a voice channel!", ephemeral=True)
         return
 
-    voice_channel = message.author.voice.channel
-    vc = get(client.voice_clients, guild=message.guild)
+    voice_channel = interaction.user.voice.channel
+    vc = get(interaction.client.voice_clients, guild=interaction.guild)
 
     if not vc:
         vc = await voice_channel.connect()
 
+    await interaction.response.send_message(f"🎶 Playing audio from: {soundcloud_url}")
     await play_soundcloud(vc, soundcloud_url)
