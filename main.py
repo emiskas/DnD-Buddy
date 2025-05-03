@@ -1,8 +1,10 @@
 import os
+import asyncio
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from modules.responses import setup as setup_responses
+from modules import voice  # For setting the main loop
 
 # Load environment variables
 load_dotenv()
@@ -12,26 +14,17 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix="!", intents=intents)
 
-# -------------------------------
-# ✅ Register Slash Commands
-# -------------------------------
 @client.event
 async def on_ready():
     print(f"✅ {client.user} is now running!")
 
     try:
-        # Register responses (DND commands)
         setup_responses(client)
-
-        # Sync all commands with Discord
         synced = await client.tree.sync()
         print(f"✅ Synced {len(synced)} command(s) successfully!")
     except Exception as e:
         print(f"❌ Failed to sync commands: {e}")
 
-# -------------------------------
-# ✅ Clean up Shutdown Handling
-# -------------------------------
 @client.event
 async def on_disconnect():
     print(f"🚫 {client.user} has disconnected")
@@ -40,11 +33,11 @@ async def on_disconnect():
 async def on_resumed():
     print(f"🔄 {client.user} has reconnected")
 
-# -------------------------------
-# ✅ Start the Bot
-# -------------------------------
-def main():
-    client.run(TOKEN)
+# ✅ Start the bot inside a running event loop
+async def main():
+    # Set the main loop reference for voice.py
+    voice.main_loop = asyncio.get_running_loop()
+    await client.start(TOKEN)
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
