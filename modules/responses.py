@@ -52,6 +52,28 @@ class Responses(app_commands.Group):
         )
         await interaction.response.send_message(embed=embed)
 
+    @app_commands.command(name="rolladv", description="Roll 2d20 and keep the highest (advantage).")
+    async def rolladv(self, interaction: Interaction):
+        rolls = [randint(1, 20), randint(1, 20)]
+        chosen = max(rolls)
+        embed = discord.Embed(
+            title="🎯 Roll with Advantage",
+            description=f"Rolls: `{rolls[0]}`, `{rolls[1]}` → **{chosen}** (highest)",
+            color=discord.Color.green()
+        )
+        await interaction.response.send_message(embed=embed)
+
+    @app_commands.command(name="rolldis", description="Roll 2d20 and keep the lowest (disadvantage).")
+    async def rolldis(self, interaction: Interaction):
+        rolls = [randint(1, 20), randint(1, 20)]
+        chosen = min(rolls)
+        embed = discord.Embed(
+            title="🎯 Roll with Disadvantage",
+            description=f"Rolls: `{rolls[0]}`, `{rolls[1]}` → **{chosen}** (lowest)",
+            color=discord.Color.red()
+        )
+        await interaction.response.send_message(embed=embed)
+
     @app_commands.command(name="rollinit", description="Roll initiative with your dexterity modifier.")
     async def roll_init(self, interaction: Interaction, dex_modifier: int):
         d20 = randint(1, 20)
@@ -187,20 +209,21 @@ class Responses(app_commands.Group):
             color=discord.Color.gold()
         )
         embed.add_field(name="🎲 `/dnd roll <dice>`", value="Roll dice (e.g. d6, 4d6, 2d20)", inline=False)
-        embed.add_field(name="🎯 `/dnd rollinit <dex_mod>`", value="Roll initiative for combat.", inline=False)
-        embed.add_field(name="🏆 `/dnd order`", value="Show initiative order.", inline=False)
+        embed.add_field(name="🎯 `/dnd rolladv`", value="Roll 2d20, keep the highest (advantage)", inline=False)
+        embed.add_field(name="🎯 `/dnd rolldis`", value="Roll 2d20, keep the lowest (disadvantage)", inline=False)
+        embed.add_field(name="🎯 `/dnd rollinit <dex_mod>`", value="Roll initiative.", inline=False)
+        embed.add_field(name="🏆 `/dnd order`", value="Display initiative order.", inline=False)
         embed.add_field(name="♻️ `/dnd initreset`", value="Reset initiative order.", inline=False)
-        embed.add_field(name="🧙 `/dnd ask <question>`", value="Ask Luna about D&D rules.", inline=False)
-        embed.add_field(name="▶️ `/dnd play <url>`", value="Play a single YouTube video.", inline=False)
+        embed.add_field(name="🧙 `/dnd ask <question>`", value="Ask Luna a question.", inline=False)
+        embed.add_field(name="▶️ `/dnd play <url>`", value="Play a YouTube video.", inline=False)
         embed.add_field(name="📀 `/dnd playlist <url>`", value="Queue a YouTube playlist.", inline=False)
         embed.add_field(name="⏸️ `/dnd pause`", value="Pause music.", inline=False)
         embed.add_field(name="▶️ `/dnd resume`", value="Resume music.", inline=False)
-        embed.add_field(name="⏭️ `/dnd skip`", value="Skip the current track.", inline=False)
-        embed.add_field(name="🧾 `/dnd queue`", value="Show upcoming songs.", inline=False)
+        embed.add_field(name="⏭️ `/dnd skip`", value="Skip current track.", inline=False)
+        embed.add_field(name="🧾 `/dnd queue`", value="Show upcoming queue.", inline=False)
         embed.add_field(name="🛑 `/dnd stop`", value="Stop and disconnect.", inline=False)
 
         await interaction.response.send_message(embed=embed)
-
 
 # ✅ Register the Group
 def setup(client):
